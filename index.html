@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Azure Cognitive Services Demo</title>
+</head>
+<body>
+    <h1>Azure Cognitive Services Demo</h1>
+    <input type="text" id="inputText" placeholder="Enter text for analysis">
+    <button onclick="analyzeText()">Analyze Text</button>
+    <div id="result"></div>
+
+    <script>
+        async function analyzeText() {
+            const inputText = document.getElementById('inputText').value;
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Analyzing...';
+
+            // URL مربوط به تابع Azure Function شما
+            const functionUrl = 'https://api-ali.azurewebsites.net/api/API-ALI'; 
+
+            try {
+                const response = await fetch(functionUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ text: inputText }) // متن وارد شده توسط کاربر
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                resultDiv.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`; // نمایش نتیجه
+            } catch (error) {
+                console.error('Error:', error);
+                resultDiv.innerHTML = `Error: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>
